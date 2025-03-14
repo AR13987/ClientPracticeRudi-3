@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/main.css">
+    <script defer src="js/vue.min.js"></script>
+    <script defer src="js/main-app.js"></script>
+    <title>Notes App</title>
+</head>
+<body>
+<div id="app">
+    <div class="addCard">
+        <h3>Добавление карточки</h3>
+        <input type="text" v-model="newCard.title" placeholder="Заголовок карточки"/>
+        <textarea v-model="newCard.items" placeholder="Список (вводите задачи через запятую)"></textarea>
+        <button @click="addCard">Добавить карточку</button>
+    </div>
+
+    <div class="columns">
+        <div class="firstColumn">
+            <h3>Первый столбец (до 50% вып.задач/макс. 3 карточки)</h3>
+            <div v-for="(card, index) in columns.firstColumn" :key="index" class="card">
+                <h4>{{card.title}}</h4>
+                <ul>
+                    <li v-for="(item, i) in card.items" :key="i">
+                        <input type="checkbox" v-model="item.completed" @change="updateProgress('firstColumn', index)"/>
+                        {{item.text}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="secondColumn">
+            <h3>Второй столбец (до 100% вып.задач/макс. 5 карточек)</h3>
+            <div v-for="(card, index) in columns.secondColumn" :key="index" class="card">
+                <h4>{{card.title}}</h4>
+                <ul>
+                    <li v-for="(item, i) in card.items" :key="i">
+                        <input type="checkbox" v-model="item.completed" @change="updateProgress('secondColumn', index)"/>
+                        {{item.text}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="thirdColumn">
+            <div v-for="(card, index) in columns.thirdColumn" :key="index" class="card">
+                <h4>{{card.title}}</h4>
+                <ul>
+                    <li v-for="(item, i) in card.items" :key="i">
+                        <input type="checkbox" v-model="item.completed"/>
+                        {{item.text}}
+                    </li>
+                </ul>
+                <p>Завершено: {{card.completedAt}}</p>
+            </div>
+        </div>
+
+        <div class="fourthColumn">
+<!--            <div v-for="(card, index) in columns.thirdColumn" :key="index" class="card">-->
+<!--                <h4>{{card.title}}</h4>-->
+<!--                <ul>-->
+<!--                    <li v-for="(item, i) in card.items" :key="i">-->
+<!--                        <input type="checkbox" v-model="item.completed"/>-->
+<!--                        {{item.text}}-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--                <p>Завершено: {{card.completedAt}}</p>-->
+<!--            </div>-->
+        </div>
+    </div>
+</div>
+</body>
+</html>

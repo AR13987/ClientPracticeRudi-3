@@ -8,28 +8,29 @@
     <link rel="stylesheet" href="css/main.css">
     <script defer src="js/vue.min.js"></script>
     <script defer src="js/main-app.js"></script>
-    <title>Notes App</title>
+    <title>Kanban App</title>
 </head>
 <body>
 <div id="app">
-    <div class="addCard">
-        <h3>Добавление карточки</h3>
-        <input type="text" v-model="newCard.title" placeholder="Заголовок карточки"/>
-        <form class="custom-marks">
-            <label>Выберите символ для разделения задач: </label>
-            <select id="marks" v-model="selectedSeparator">
-                <option value=",">,</option>
-                <option value=";">;</option>
-                <option value="-">-</option>
-            </select>
-        </form>
-        <textarea v-model="newCard.items" placeholder="Список (вводите задачи через выбранный символ, '!' перед задачей указывает на ее важность)"></textarea>
-        <button @click="addCard">Добавить карточку</button>
-    </div>
-
     <div class="columns">
         <div class="firstColumn">
-            <h3>Первый столбец (до 50% вып.задач/макс. 3 карточки)</h3>
+            <h3>Запланированные задачи</h3>
+            <div class="addCard">
+                <h3>Добавление карточки</h3>
+                <input type="text" v-model="newCard.title" placeholder="Заголовок карточки"/>
+                <form class="custom-marks">
+                    <label>Выберите символ для разделения задач: </label>
+                    <select id="marks" v-model="selectedSeparator">
+                        <option value=",">,</option>
+                        <option value=";">;</option>
+                        <option value="-">-</option>
+                    </select>
+                </form>
+                <textarea v-model="newCard.items" placeholder="Список (вводите задачи через выбранный символ, '!' перед задачей указывает на ее важность)"></textarea>
+                <label>Дата выполнения задачи: </label>
+                <input type="date"/>
+                <button @click="addCard">Добавить карточку</button>
+            </div>
             <div v-for="(card, index) in columns.firstColumn" :key="index" class="card">
                 <h4>{{card.title}}</h4>
                 <ul>
@@ -42,7 +43,7 @@
         </div>
 
         <div class="secondColumn">
-            <h3>Второй столбец (до 100% вып.задач/макс. 5 карточек)</h3>
+            <h3>Задачи в работе</h3>
             <div v-for="(card, index) in columns.secondColumn" :key="index" class="card">
                 <h4>{{card.title}}</h4>
                 <ul>
@@ -55,6 +56,21 @@
         </div>
 
         <div class="thirdColumn">
+            <h3>Тестирование</h3>
+            <div v-for="(card, index) in columns.thirdColumn" :key="index" class="card">
+                <h4>{{card.title}}</h4>
+                <ul>
+                    <li v-for="(item, i) in card.items" :key="i" :class="{importantColor: item.important}">
+                        <input type="checkbox" v-model="item.completed"/>
+                        {{item.text}}
+                    </li>
+                </ul>
+                <p>Завершено: {{card.completedAt}}</p>
+            </div>
+        </div>
+
+        <div class="fourthColumn">
+            <h3>Выполненные задачи</h3>
             <div v-for="(card, index) in columns.thirdColumn" :key="index" class="card">
                 <h4>{{card.title}}</h4>
                 <ul>

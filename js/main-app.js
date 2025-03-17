@@ -3,13 +3,16 @@ Vue.component('columns', {
     <div class="columns">
         <div class="firstColumn">
             <h3>Запланированные задачи</h3>
-            <button @click="showModal = true">+ создать карточку задачи</button>
-            <modalWindow :show="showModal" @close="showModal = false" @add-card="addCardToFirstColumn"></modalWindow>
-            <div v-for="card in columns.firstColumn" class="card">
+            <button @click="showCreateModal()">+ создать карточку задачи</button>
+            <modalWindow :show="showModal" :card="currentCard" @close="closeModal" @submit="handleCardSubmit"></modalWindow>
+            <div v-for="(card, index) in columns.firstColumn" :key="index" class="card">
                 <h4>{{card.title}}</h4>
                 <p>{{card.description}}</p>
                 <p>Создано: {{card.creationDate}}</p>
                 <p>Дэдлайн: {{card.deadline}}</p>
+                <p v-if="card.lastEdited">Последнее редактирование: {{card.lastEdited}}</p>
+                <button @click="showEditModal(card)">Редактировать</button>
+                <button @click="deleteCard(index)">Удалить</button>
             </div>
         </div>
 
@@ -36,14 +39,39 @@ Vue.component('columns', {
                 fourthColumn: []
             },
 
-            showModal: false
+            showModal: false,
+
+            currentCard: null
         }
     },
 
     methods: {
-        addCardToFirstColumn(card) {
-            this.columns.firstColumn.push(card)
+        showCreateModal() {
+            this.currentCard = null
+            this.showModal = true
+        },
+
+        showEditModal(card) {
+            this.currentCard = card
+            this.showModal = true
+        },
+
+        handleCardSubmit(card) {
+            if (this.currentCard) {
+                Object.assign(this.currentCard, card)
+            } else {
+                this.columns.firstColumn.push(card)
+            }
             this.saveData()
+        },
+
+        deleteCard(index) {
+            this.columns.firstColumn = this.columns.firstColumn.filter((_, i) => i !== index)
+            this.saveData()
+        },
+
+        closeModal() {
+            this.showModal = false
         },
 
         saveData() {
@@ -70,35 +98,63 @@ Vue.component('columns', {
 
 
 Vue.component('modalWindow', {
-    props: ['show'],
+    props: ['show', 'card'],
     template: `
     <div v-if="show" class="modal">
         <div class="modalContent">
-            <h3>Создание карточки задачи</h3>
-            <input type="text" v-model="newCard.title" placeholder="Заголовок карточки"/>
-            <textarea v-model="newCard.description" placeholder="Введите свою задачу"></textarea>
+            <h3>{{card ? 'Редактировать карточку' : 'Создать карточку'}}</h3>
+            <input type="text" v-model="localCard.title" placeholder="Заголовок карточки"/>
+            <textarea v-model="localCard.description" placeholder="Введите свою задачу"></textarea>
             <label>Дэдлайн: </label>
-            <input type="date" v-model="newCard.deadline"/>
-            <button @click="createCard">Создать</button>
+            <input type="date" v-model="localCard.deadline"/>
+            <button @click="submitCard">{{card ? 'Сохранить изменения' : 'Создать'}}</button>
             <button @click="$emit('close')">Закрыть</button>
         </div>
     </div>`,
 
     data() {
         return {
-            newCard: {
+            localCard: {
                 title: '',
                 description: '',
                 deadline: '',
-                creationDate: new Date().toISOString().split('T')[0]
+                creationDate: '',
+                lastEdited: ''
+            }
+        }
+    },
+
+    watch: {
+        card: {
+            immediate: true,
+            handler(newCard) {
+                if (newCard) {
+                    this.localCard = {
+                        title: newCard.title,
+                        description: newCard.description,
+                        deadline: newCard.deadline,
+                        creationDate: newCard.creationDate,
+                        lastEdited: newCard.lastEdited,
+                    }
+                } else {
+                    this.localCard = {
+                        title: '',
+                        description: '',
+                        deadline: '',
+                        creationDate: new Date().toISOString().split('T')[0],
+                        lastEdited: ''
+                    }
+                }
             }
         }
     },
 
     methods: {
-        createCard() {
-            this.$emit('add-card', {...this.newCard})
-            this.newCard = {title: '', description: '', deadline: '', creationDate: new Date().toISOString().split('T')[0]}
+        submitCard() {
+            if (this.card) {
+                this.localCard.lastEdited = new Date().toISOString().split('T')[0]
+            }
+            this.$emit('submit', {...this.localCard})
             this.$emit('close')
         }
     }

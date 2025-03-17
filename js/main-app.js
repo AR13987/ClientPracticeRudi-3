@@ -14,19 +14,11 @@ Vue.component('columns', {
                 secondColumn: [],
                 thirdColumn: [],
                 fourthColumn: []
-            },
-
-            newCard: {
-
-            },
+            }
         }
     },
 
     methods: {
-        addCard() {
-                this.saveData()
-        },
-
         moveCard() {
             this.saveData()
         },
@@ -65,6 +57,23 @@ Vue.component('column', {
         </div>
     </div>
 `,
+})
+
+
+
+Vue.component('modalWindow', {
+    props: ['show'],
+    template: `
+    <div v-if="show" class="modal">
+        <div class="modalContent">
+            <h3>Добавление карточки задачи</h3>
+            <input type="text" v-model="newCard.title" placeholder="Заголовок карточки"/>
+            <textarea v-model="newCard.items" placeholder="Введите свою задачу"></textarea>
+            <label>Когда задача должна быть выполнена?: </label>
+            <input type="date"/>
+            <button @click="addCard">Добавить карточку</button>
+        </div>
+    </div>`,
 })
 
 

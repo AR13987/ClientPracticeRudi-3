@@ -1,11 +1,11 @@
 Vue.component('columns', {
     template: `
     <div class="columns">
-        <div class="firstColumn">
+        <div class="firstColumn" @dragover.prevent @drop="onDrop('firstColumn')">
             <h3>Запланированные задачи</h3>
             <button @click="showCreateModal()">+ создать карточку задачи</button>
             <modalWindow :show="showModal" :card="currentCard" @close="closeModal" @submit="handleCardSubmit"></modalWindow>
-            <div v-for="(card, index) in columns.firstColumn" :key="index" class="card">
+            <div v-for="(card, index) in columns.firstColumn" :key="index" class="card" draggable="true" @dragstart="onDragStart('firstColumn', index)">
                 <h4>{{card.title}}</h4>
                 <p>{{card.description}}</p>
                 <p>Создано: {{card.creationDate}}</p>
@@ -16,8 +16,16 @@ Vue.component('columns', {
             </div>
         </div>
 
-        <div class="secondColumn">
+        <div class="secondColumn" @dragover.prevent @drop="onDrop('secondColumn')">
             <h3>Задачи в работе</h3>
+            <div v-for="(card, index) in columns.secondColumn" :key="index" class="card" draggable="true" @dragstart="onDragStart('secondColumn', index)">
+                <h4>{{card.title}}</h4>
+                <p>{{card.description}}</p>
+                <p>Создано: {{card.creationDate}}</p>
+                <p>Дэдлайн: {{card.deadline}}</p>
+                <p v-if="card.lastEdited">Последнее редактирование: {{card.lastEdited}}</p>
+                <button @click="showEditModal(card)">Редактировать</button>
+            </div>
         </div>
 
         <div class="thirdColumn">
@@ -41,11 +49,33 @@ Vue.component('columns', {
 
             showModal: false,
 
-            currentCard: null
+            currentCard: null,
+
+            draggedCard: null
         }
     },
 
     methods: {
+        onDragStart(column, index) {
+            this.draggedCard = {
+                column,
+                index,
+                card: this.columns[column][index],
+            }
+        },
+
+        onDrop(targetColumn) {
+          if (!this.draggedCard || !this.columns[this.draggedCard.column]) return
+
+          this.columns[this.draggedCard.column].splice(this.draggedCard.index, 1)
+
+          this.columns[targetColumn].push(this.draggedCard.card)
+
+          this.draggedCard = null
+
+          this.saveData()
+        },
+
         showCreateModal() {
             this.currentCard = null
             this.showModal = true

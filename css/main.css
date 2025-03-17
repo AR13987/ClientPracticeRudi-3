@@ -26,6 +26,12 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: 1px 1px 4px;
+    border: 2px dashed transparent;
+    transition: border 0.3s;
+}
+
+.firstColumn:hover {
+    border: 2px dashed #000
 }
 
 .secondColumn {
@@ -35,6 +41,12 @@ body {
     display: flex;
     flex-direction: column;
     box-shadow: 1px 1px 4px;
+    border: 2px dashed transparent;
+    transition: border 0.3s;
+}
+
+.secondColumn:hover {
+    border: 2px dashed #000
 }
 
 .thirdColumn {

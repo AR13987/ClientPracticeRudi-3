@@ -1,29 +1,10 @@
 Vue.component('columns', {
     template: `
     <div class="columns">
-        <div class="firstColumn">
-            <h3>Запланированные задачи</h3>
-            <div class="addCard">
-                <h3>Добавление карточки задачи</h3>
-                <input type="text" v-model="newCard.title" placeholder="Заголовок карточки"/>
-                <textarea v-model="newCard.items" placeholder="Введите свою задачу"></textarea>
-                <label>Когда задача должна быть выполнена?: </label>
-                <input type="date"/>
-                <button @click="addCard">Добавить карточку</button>
-            </div>
-        </div>
-
-        <div class="secondColumn">
-            <h3>Задачи в работе</h3>
-        </div>
-
-        <div class="thirdColumn">
-            <h3>Тестирование</h3>
-        </div>
-
-        <div class="fourthColumn">
-            <h3>Выполненные задачи</h3>
-        </div>
+        <column title="Запланированные задачи" :cards="columns.firstColumn"></column>
+        <column title="Задачи в работе" :cards="columns.secondColumn"></column>
+        <column title="Тестирование" :cards="columns.thirdColumn"></column>
+        <column title="Выполненные задачи" :cards="columns.fourthColumn"></column>
     </div>`,
 
     data() {
@@ -69,6 +50,21 @@ Vue.component('columns', {
     created() {
         this.loadData()
     }
+})
+
+
+
+Vue.component('column', {
+    props: ['title', 'cards'],
+    template: `
+    <div class="column">
+        <h3>{{title}}</h3>
+        <div v-for="card in cards" class="card">
+             <h4>{{card.title}}</h4>
+             <p>{{card.items}}</p>
+        </div>
+    </div>
+`,
 })
 
 

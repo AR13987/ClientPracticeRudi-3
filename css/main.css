@@ -19,35 +19,8 @@ body {
     justify-content: space-between;
 }
 
-.firstColumn {
-    background-color: #ffc400;
-    width: 27em;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 1px 1px 4px;
-}
-
-.secondColumn {
-    background-color: #58cf36;
-    width: 27em;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 1px 1px 4px;
-}
-
-.thirdColumn {
-    background-color: #27a2a8;
-    width: 27em;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 1px 1px 4px;
-}
-
-.fourthColumn {
-    background-color: #551eb5;
+.column {
+    background-color: #5e65ec;
     width: 27em;
     height: fit-content;
     display: flex;

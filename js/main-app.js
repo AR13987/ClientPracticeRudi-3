@@ -48,7 +48,7 @@ Vue.component('columns', {
                 <p>Создано: {{card.creationDate}}</p>
                 <p>Дэдлайн: {{card.deadline}}</p>
                 <p v-if="card.lastEdited">Последнее редактирование: {{card.lastEdited}}</p>
-                <button @click="showEditModal(card)">Редактировать</button>
+                <p v-if="card.status">Статус: {{card.status}}</p>
             </div>
         </div>
         
@@ -95,12 +95,22 @@ Vue.component('columns', {
           if (this.draggedCard.column === 'thirdColumn' && targetColumn === 'secondColumn') {
               this.returnReasonCard = removedCard
               this.showReturnModal = true
+          } else if (targetColumn === 'fourthColumn') {
+              const currentDate = new Date()
+              const deadlineDate = new Date(removedCard.deadline)
+
+              if (!isNaN(deadlineDate)) {
+                  removedCard.status = currentDate <= deadlineDate ? 'Выполнено в срок' : 'Просрочено'
+              } else {
+                  removedCard.status = 'Не задан дэдлайн'
+              }
+              this.columns[targetColumn].push(removedCard)
           } else {
               this.columns[targetColumn].push(removedCard)
-              this.saveData()
           }
 
           this.draggedCard = null
+          this.saveData()
         },
 
         showCreateModal() {
@@ -192,7 +202,7 @@ Vue.component('returnModalWindow', {
               return
           }
 
-          this.card.reason = this.returnReason
+          this.card.reason = this.returnReason.trim()
           this.$emit('submit', this.card)
           this.$emit('close')
           this.errorMessage = ''

@@ -67,7 +67,11 @@ Vue.component('columns', {
 
             currentCard: null,
 
-            draggedCard: null
+            draggedCard: null,
+
+            returnReasonCard: null,
+
+            showReturnModal: false
         }
     },
 
@@ -82,14 +86,17 @@ Vue.component('columns', {
 
         onDrop(targetColumn) {
           if (!this.draggedCard || !this.columns[this.draggedCard.column]) return
+          const removedCard = this.columns[this.draggedCard.column].splice(this.draggedCard.index, 1)[0]
 
-          this.columns[this.draggedCard.column].splice(this.draggedCard.index, 1)
-
-          this.columns[targetColumn].push(this.draggedCard.card)
+          if (this.draggedCard.column === 'thirdColumn' && targetColumn === 'secondColumn') {
+              this.returnReasonCard = removedCard
+              this.showReturnModal = true
+          } else {
+              this.columns[targetColumn].push(removedCard)
+              this.saveData()
+          }
 
           this.draggedCard = null
-
-          this.saveData()
         },
 
         showCreateModal() {
@@ -139,6 +146,39 @@ Vue.component('columns', {
     created() {
         this.loadData()
     }
+})
+
+
+
+Vue.component('returnModalWindow', {
+  props: ['show', 'card'],
+  template: `
+    <div v-if="show" class="modal">
+        <div class="modalContent">
+            <h3>Укажите причину возврата</h3>
+            <textarea v-model="returnReason" placeholder="Введите причину"></textarea>
+            <button @click="submitReturnReason">Сохранить причину</button>
+            <button @click="$emit('close')">Закрыть</button>
+        </div>    
+    </div>`,
+
+  data() {
+      return {
+          returnReason: ''
+      }
+  },
+
+  methods: {
+      submitReturnReason() {
+          if(!this.returnReason.trim()) {
+              return
+          }
+
+          this.card.reason = this.returnReason
+          this.$emit('submit', card)
+          this.$emit('close')
+      }
+  }
 })
 
 
@@ -209,12 +249,5 @@ Vue.component('modalWindow', {
 
 
 let app = new Vue({
-    el: '#app',
-    data: {
-
-    },
-
-    methods: {
-
-    },
+    el: '#app'
 })

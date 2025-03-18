@@ -56,15 +56,27 @@ body {
      display: flex;
      flex-direction: column;
      box-shadow: 1px 1px 4px;
+     border: 2px dashed transparent;
+     transition: border 0.3s;
  }
 
+.thirdColumn:hover {
+    border: 2px dashed #000
+}
+
 .fourthColumn {
-    background-color: #27a2a8;
+    background-color: #2745a8;
     width: 27em;
     height: fit-content;
     display: flex;
     flex-direction: column;
     box-shadow: 1px 1px 4px;
+    border: 2px dashed transparent;
+    transition: border 0.3s;
+}
+
+.fourthColumn:hover {
+    border: 2px dashed #000
 }
 
 .card {

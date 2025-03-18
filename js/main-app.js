@@ -28,12 +28,28 @@ Vue.component('columns', {
             </div>
         </div>
 
-        <div class="thirdColumn">
+        <div class="thirdColumn" @dragover.prevent @drop="onDrop('thirdColumn')">
             <h3>Тестирование</h3>
+            <div v-for="(card, index) in columns.thirdColumn" :key="index" class="card" draggable="true" @dragstart="onDragStart('thirdColumn', index)">
+                <h4>{{card.title}}</h4>
+                <p>{{card.description}}</p>
+                <p>Создано: {{card.creationDate}}</p>
+                <p>Дэдлайн: {{card.deadline}}</p>
+                <p v-if="card.lastEdited">Последнее редактирование: {{card.lastEdited}}</p>
+                <button @click="showEditModal(card)">Редактировать</button>
+            </div>
         </div>
 
-        <div class="fourthColumn">
+        <div class="fourthColumn" @dragover.prevent @drop="onDrop('fourthColumn')">
             <h3>Выполненные задачи</h3>
+            <div v-for="(card, index) in columns.fourthColumn" :key="index" class="card" draggable="true" @dragstart="onDragStart('fourthColumn', index)">
+                <h4>{{card.title}}</h4>
+                <p>{{card.description}}</p>
+                <p>Создано: {{card.creationDate}}</p>
+                <p>Дэдлайн: {{card.deadline}}</p>
+                <p v-if="card.lastEdited">Последнее редактирование: {{card.lastEdited}}</p>
+                <button @click="showEditModal(card)">Редактировать</button>
+            </div>
         </div>
     </div>
     `,

@@ -218,6 +218,7 @@ Vue.component('modalWindow', {
     <div v-if="show" class="modal">
         <div class="modalContent">
             <h3>{{card ? 'Редактировать карточку' : 'Создать карточку'}}</h3>
+            <p v-if="errorMessage" class="error">{{errorMessage}}</p>
             <input type="text" v-model="localCard.title" placeholder="Заголовок карточки"/>
             <textarea v-model="localCard.description" placeholder="Введите свою задачу"></textarea>
             <label>Дэдлайн: </label>
@@ -234,8 +235,10 @@ Vue.component('modalWindow', {
                 description: '',
                 deadline: '',
                 creationDate: '',
-                lastEdited: ''
-            }
+                lastEdited: '',
+            },
+
+            errorMessage: ''
         }
     },
 
@@ -266,11 +269,18 @@ Vue.component('modalWindow', {
 
     methods: {
         submitCard() {
+            if (!this.localCard.title.trim() || !this.localCard.description.trim()) {
+                this.errorMessage = 'Заполните заголовок и описание задачи'
+                return
+            }
+
             if (this.card) {
                 this.localCard.lastEdited = new Date().toISOString().split('T')[0]
             }
+
             this.$emit('submit', {...this.localCard})
             this.$emit('close')
+            this.errorMessage = ''
         }
     }
 })
